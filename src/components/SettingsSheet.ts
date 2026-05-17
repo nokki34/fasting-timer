@@ -18,11 +18,11 @@ export function openSettingsSheet(params: OpenSettingsParams): Promise<Settings 
         <h2>Fasting window</h2>
         <label>
           Window start
-          <input type="time" data-start value="${initial.windowStart}" required />
+          <input type="time" data-start required />
         </label>
         <label>
           Window end
-          <input type="time" data-end value="${initial.windowEnd}" required />
+          <input type="time" data-end required />
         </label>
         <div class="error" data-error></div>
         <div class="sheet-actions">
@@ -35,6 +35,9 @@ export function openSettingsSheet(params: OpenSettingsParams): Promise<Settings 
     const startInput = backdrop.querySelector<HTMLInputElement>("[data-start]")!;
     const endInput = backdrop.querySelector<HTMLInputElement>("[data-end]")!;
     const errorEl = backdrop.querySelector<HTMLDivElement>("[data-error]")!;
+
+    startInput.value = initial.windowStart;
+    endInput.value = initial.windowEnd;
     const saveBtn = backdrop.querySelector<HTMLButtonElement>("[data-save]")!;
     const cancelBtn = backdrop.querySelector<HTMLButtonElement>("[data-cancel]")!;
 
