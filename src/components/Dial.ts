@@ -98,7 +98,7 @@ export function mount(parent: HTMLElement, initial: DialProps): DialHandle {
 
       const overspan = Math.min(1, p - 1); // cap at one extra revolution
       if (overspan > 0) {
-        overlapEl.setAttribute("d", arcPath(0, overspan * 360));
+        overlapEl.setAttribute("d", arcPath(0, overspan >= 1 ? 359.99 : overspan * 360));
         overlapEl.setAttribute("opacity", "1");
       } else {
         overlapEl.setAttribute("d", "");
