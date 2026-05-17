@@ -166,10 +166,12 @@ async function bootstrap() {
   }
 
   async function handleEnd() {
-    const s = store.get();
-    if (!s.activeFast) return;
-    const endedAt = await openEndConfirmSheet({ startedAt: s.activeFast.startedAt });
+    const before = store.get();
+    if (!before.activeFast) return;
+    const endedAt = await openEndConfirmSheet({ startedAt: before.activeFast.startedAt });
     if (endedAt == null) return;
+    const s = store.get();
+    if (!s.activeFast) return; // ended via another path while sheet was open
     const last: LastFast = {
       startedAt: s.activeFast.startedAt,
       endedAt,
@@ -181,10 +183,12 @@ async function bootstrap() {
   }
 
   async function handleEditStart() {
-    const s = store.get();
-    if (!s.activeFast) return;
-    const newStartedAt = await openEditStartSheet(s.activeFast.startedAt);
+    const before = store.get();
+    if (!before.activeFast) return;
+    const newStartedAt = await openEditStartSheet(before.activeFast.startedAt);
     if (newStartedAt == null) return;
+    const s = store.get();
+    if (!s.activeFast) return; // ended while sheet was open
     const updated: ActiveFast = { ...s.activeFast, startedAt: newStartedAt };
     storage.saveActiveFast(updated);
     store.set({ ...s, activeFast: updated, now: Date.now() });
@@ -192,10 +196,10 @@ async function bootstrap() {
 
   // Gear → settings sheet
   gearBtn.addEventListener("click", async () => {
-    const s = store.get();
-    const result = await openSettingsSheet({ initial: s.settings });
+    const result = await openSettingsSheet({ initial: store.get().settings });
     if (!result) return;
     storage.saveSettings(result);
+    const s = store.get();
     store.set({ ...s, settings: result });
   });
 }
