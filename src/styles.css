@@ -1,0 +1,145 @@
+:root {
+  --bg: #0f1115;
+  --surface: #181b22;
+  --surface-2: #20242d;
+  --track: #2a2f3a;
+  --primary: #7aa2f7;
+  --success: #9ece6a;
+  --warning: #f7768e;
+  --text: #e6e8ee;
+  --text-dim: #8a93a4;
+  --text-faint: #5b6273;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  max-width: 480px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 16px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 20px;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.icon-btn:hover { background: var(--surface); color: var(--text); }
+
+.dial-wrap { display: flex; justify-content: center; padding: 12px 0; }
+.dial-wrap svg { width: 100%; max-width: 320px; height: auto; }
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+}
+.meta-row .meta-label { font-size: 10px; color: var(--text-faint); letter-spacing: 0.08em; }
+.meta-row .meta-val { color: var(--text); }
+.meta-row button.meta-val {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline dotted var(--text-faint);
+  text-underline-offset: 3px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding-top: 8px;
+}
+.btn-primary {
+  width: 100%;
+  max-width: 320px;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--primary);
+  color: #0a0c10;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primary.danger { background: var(--warning); color: #1a0a0f; }
+.last-fast {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.sheet-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: flex-end; justify-content: center;
+  z-index: 10;
+}
+.sheet {
+  background: var(--surface);
+  width: 100%; max-width: 480px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 20px 20px 28px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.sheet h2 { margin: 0; font-size: 16px; }
+.sheet label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--text-dim); }
+.sheet input[type="time"], .sheet input[type="datetime-local"] {
+  background: var(--surface-2);
+  border: 1px solid var(--track);
+  color: var(--text);
+  font: inherit;
+  padding: 10px;
+  border-radius: 8px;
+  color-scheme: dark;
+}
+.sheet .sheet-actions { display: flex; gap: 10px; margin-top: 4px; }
+.sheet .sheet-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font: inherit; font-weight: 600;
+  cursor: pointer;
+}
+.sheet .btn-cancel { background: var(--surface-2); color: var(--text); }
+.sheet .btn-save   { background: var(--primary); color: #0a0c10; }
+.sheet .error { color: var(--warning); font-size: 12px; min-height: 1em; }
