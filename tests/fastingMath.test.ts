@@ -6,6 +6,7 @@ import {
   formatDuration,
   formatTimeOfDay,
   plannedStartFor,
+  sameLocalYMD,
 } from "../src/fastingMath";
 
 const HOUR = 60 * 60 * 1000;
@@ -120,5 +121,25 @@ describe("plannedStartFor", () => {
     const expected = new Date(now);
     expected.setHours(9, 0, 0, 0);
     expect(plannedStartFor(now.getTime(), "09:00")).toBe(expected.getTime());
+  });
+});
+
+describe("sameLocalYMD", () => {
+  it("returns true for two times on the same local day", () => {
+    const morning = new Date();
+    morning.setHours(8, 0, 0, 0);
+    const evening = new Date(morning);
+    evening.setHours(22, 30, 0, 0);
+    expect(sameLocalYMD(morning.getTime(), evening.getTime())).toBe(true);
+  });
+  it("returns false across local midnight (1ms apart)", () => {
+    const justBefore = new Date();
+    justBefore.setHours(23, 59, 59, 999);
+    const justAfter = justBefore.getTime() + 1;
+    expect(sameLocalYMD(justBefore.getTime(), justAfter)).toBe(false);
+  });
+  it("returns true for identical timestamps", () => {
+    const t = Date.now();
+    expect(sameLocalYMD(t, t)).toBe(true);
   });
 });

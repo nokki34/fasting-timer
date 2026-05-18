@@ -56,4 +56,14 @@ export function plannedStartFor(now: number, windowStart: string): number {
   return todayPlanned.getTime() - 24 * HOUR_MS;
 }
 
+export function sameLocalYMD(a: number, b: number): boolean {
+  const da = new Date(a);
+  const db = new Date(b);
+  return (
+    da.getFullYear() === db.getFullYear() &&
+    da.getMonth() === db.getMonth() &&
+    da.getDate() === db.getDate()
+  );
+}
+
 export { HOUR_MS, MIN_MS };
