@@ -4,6 +4,7 @@ import { storage, type Settings, type ActiveFast, type LastFast } from "./storag
 import {
   windowToTargetMs,
   elapsedMs as computeElapsed,
+  plannedStartFor,
 } from "./fastingMath";
 import { mount as mountDial } from "./components/Dial";
 import { mount as mountMetaRow } from "./components/MetaRow";
@@ -160,7 +161,8 @@ async function bootstrap() {
   function handleStart() {
     const s = store.get();
     const targetMs = windowToTargetMs(s.settings.windowStart, s.settings.windowEnd);
-    const fast: ActiveFast = { startedAt: Date.now(), targetMs };
+    const startedAt = plannedStartFor(Date.now(), s.settings.windowStart);
+    const fast: ActiveFast = { startedAt, targetMs };
     storage.saveActiveFast(fast);
     store.set({ ...s, activeFast: fast, now: Date.now() });
   }
