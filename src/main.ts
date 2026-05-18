@@ -170,7 +170,10 @@ async function bootstrap() {
   async function handleEnd() {
     const before = store.get();
     if (!before.activeFast) return;
-    const endedAt = await openEndConfirmSheet({ startedAt: before.activeFast.startedAt });
+    const endedAt = await openEndConfirmSheet({
+      startedAt: before.activeFast.startedAt,
+      targetMs: before.activeFast.targetMs,
+    });
     if (endedAt == null) return;
     const s = store.get();
     if (!s.activeFast) return; // ended via another path while sheet was open

@@ -1,22 +1,39 @@
-function toLocalInputValue(epochMs: number): string {
+import { sameLocalYMD, combineTimeWithDate } from "../fastingMath";
+
+function toLocalDateTimeInputValue(epochMs: number): string {
   const d = new Date(epochMs);
   const pad = (n: number) => n.toString().padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function fromLocalInputValue(s: string): number | null {
+function toLocalTimeInputValue(epochMs: number): string {
+  const d = new Date(epochMs);
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function fromLocalDateTimeInputValue(s: string): number | null {
   const t = new Date(s).getTime();
   return Number.isFinite(t) ? t : null;
 }
 
 export type EndConfirmParams = {
   startedAt: number;
+  targetMs: number;
 };
 
 /** Returns the chosen endedAt (epoch ms) or null on cancel. */
 export function openEndConfirmSheet(params: EndConfirmParams): Promise<number | null> {
-  const { startedAt } = params;
+  const { startedAt, targetMs } = params;
   return new Promise((resolve) => {
+    const anchorMs = Date.now();
+    const useTimeOnly = sameLocalYMD(anchorMs, startedAt + targetMs);
+
+    const inputType = useTimeOnly ? "time" : "datetime-local";
+    const initialValue = useTimeOnly
+      ? toLocalTimeInputValue(anchorMs)
+      : toLocalDateTimeInputValue(anchorMs);
+
     const backdrop = document.createElement("div");
     backdrop.className = "sheet-backdrop";
     backdrop.innerHTML = `
@@ -24,7 +41,7 @@ export function openEndConfirmSheet(params: EndConfirmParams): Promise<number | 
         <h2>End fast</h2>
         <label>
           Ended at
-          <input type="datetime-local" data-input />
+          <input type="${inputType}" data-input />
         </label>
         <div class="error" data-error></div>
         <div class="sheet-actions">
@@ -39,7 +56,7 @@ export function openEndConfirmSheet(params: EndConfirmParams): Promise<number | 
     const saveBtn = backdrop.querySelector<HTMLButtonElement>("[data-save]")!;
     const cancelBtn = backdrop.querySelector<HTMLButtonElement>("[data-cancel]")!;
 
-    input.value = toLocalInputValue(Date.now());
+    input.value = initialValue;
 
     function close(result: number | null) {
       backdrop.remove();
@@ -47,9 +64,11 @@ export function openEndConfirmSheet(params: EndConfirmParams): Promise<number | 
     }
 
     saveBtn.addEventListener("click", () => {
-      const t = fromLocalInputValue(input.value);
+      const t = useTimeOnly
+        ? combineTimeWithDate(input.value, anchorMs)
+        : fromLocalDateTimeInputValue(input.value);
       if (t == null) {
-        errorEl.textContent = "Invalid date.";
+        errorEl.textContent = useTimeOnly ? "Invalid time." : "Invalid date.";
         return;
       }
       if (t < startedAt) {
