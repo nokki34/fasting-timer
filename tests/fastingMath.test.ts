@@ -133,8 +133,7 @@ describe("sameLocalYMD", () => {
     expect(sameLocalYMD(morning.getTime(), evening.getTime())).toBe(true);
   });
   it("returns false across local midnight (1ms apart)", () => {
-    const justBefore = new Date();
-    justBefore.setHours(23, 59, 59, 999);
+    const justBefore = new Date(2024, 0, 15, 23, 59, 59, 999); // Jan 15 2024 local
     const justAfter = justBefore.getTime() + 1;
     expect(sameLocalYMD(justBefore.getTime(), justAfter)).toBe(false);
   });
