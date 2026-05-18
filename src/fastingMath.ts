@@ -44,4 +44,16 @@ export function formatTimeOfDay(epochMs: number): string {
   return `${h}:${m.toString().padStart(2, "0")}${ampm}`;
 }
 
+export function plannedStartFor(now: number, windowStart: string): number {
+  const minutes = parseHHmm(windowStart);
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  const todayPlanned = new Date(now);
+  todayPlanned.setHours(h, m, 0, 0);
+  if (todayPlanned.getTime() <= now) {
+    return todayPlanned.getTime();
+  }
+  return todayPlanned.getTime() - 24 * HOUR_MS;
+}
+
 export { HOUR_MS, MIN_MS };

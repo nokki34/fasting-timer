@@ -5,6 +5,7 @@ import {
   progress,
   formatDuration,
   formatTimeOfDay,
+  plannedStartFor,
 } from "../src/fastingMath";
 
 const HOUR = 60 * 60 * 1000;
@@ -89,5 +90,35 @@ describe("formatTimeOfDay", () => {
     const d = new Date();
     d.setHours(0, 5, 0, 0);
     expect(formatTimeOfDay(d.getTime())).toBe("12:05am");
+  });
+});
+
+describe("plannedStartFor", () => {
+  it("returns today's planned time when now is after it", () => {
+    const now = new Date();
+    now.setHours(21, 7, 0, 0); // 21:07 today
+    const expected = new Date(now);
+    expected.setHours(21, 0, 0, 0); // 21:00 today
+    expect(plannedStartFor(now.getTime(), "21:00")).toBe(expected.getTime());
+  });
+  it("returns yesterday's planned time when now is before today's", () => {
+    const now = new Date();
+    now.setHours(20, 55, 0, 0); // 20:55 today, windowStart 21:00
+    const expected = new Date(now);
+    expected.setHours(21, 0, 0, 0); // 21:00 today
+    const yesterday = expected.getTime() - 24 * 60 * 60 * 1000;
+    expect(plannedStartFor(now.getTime(), "21:00")).toBe(yesterday);
+  });
+  it("returns today's planned time when now exactly equals it", () => {
+    const now = new Date();
+    now.setHours(21, 0, 0, 0);
+    expect(plannedStartFor(now.getTime(), "21:00")).toBe(now.getTime());
+  });
+  it("parses leading-zero hour correctly", () => {
+    const now = new Date();
+    now.setHours(10, 0, 0, 0);
+    const expected = new Date(now);
+    expected.setHours(9, 0, 0, 0);
+    expect(plannedStartFor(now.getTime(), "09:00")).toBe(expected.getTime());
   });
 });
