@@ -7,6 +7,7 @@ import {
   formatTimeOfDay,
   plannedStartFor,
   sameLocalYMD,
+  combineTimeWithDate,
 } from "../src/fastingMath";
 
 const HOUR = 60 * 60 * 1000;
@@ -140,5 +141,44 @@ describe("sameLocalYMD", () => {
   it("returns true for identical timestamps", () => {
     const t = Date.now();
     expect(sameLocalYMD(t, t)).toBe(true);
+  });
+});
+
+describe("combineTimeWithDate", () => {
+  it("returns a timestamp on the anchor's date with the given time", () => {
+    const anchor = new Date();
+    anchor.setHours(15, 30, 0, 0);
+    const result = combineTimeWithDate("09:15", anchor.getTime());
+    expect(result).not.toBeNull();
+    const r = new Date(result!);
+    expect(r.getFullYear()).toBe(anchor.getFullYear());
+    expect(r.getMonth()).toBe(anchor.getMonth());
+    expect(r.getDate()).toBe(anchor.getDate());
+    expect(r.getHours()).toBe(9);
+    expect(r.getMinutes()).toBe(15);
+    expect(r.getSeconds()).toBe(0);
+    expect(r.getMilliseconds()).toBe(0);
+  });
+  it("handles 00:00 boundary", () => {
+    const anchor = Date.now();
+    const result = combineTimeWithDate("00:00", anchor);
+    expect(result).not.toBeNull();
+    const r = new Date(result!);
+    expect(r.getHours()).toBe(0);
+    expect(r.getMinutes()).toBe(0);
+  });
+  it("handles 23:59 boundary", () => {
+    const anchor = Date.now();
+    const result = combineTimeWithDate("23:59", anchor);
+    expect(result).not.toBeNull();
+    const r = new Date(result!);
+    expect(r.getHours()).toBe(23);
+    expect(r.getMinutes()).toBe(59);
+  });
+  it("returns null on garbage input", () => {
+    expect(combineTimeWithDate("nope", Date.now())).toBeNull();
+    expect(combineTimeWithDate("", Date.now())).toBeNull();
+    expect(combineTimeWithDate("99:99", Date.now())).toBeNull();
+    expect(combineTimeWithDate("12", Date.now())).toBeNull();
   });
 });

@@ -66,4 +66,15 @@ export function sameLocalYMD(a: number, b: number): boolean {
   );
 }
 
+export function combineTimeWithDate(timeStr: string, dateAnchorMs: number): number | null {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(timeStr);
+  if (!match) return null;
+  const h = Number(match[1]);
+  const m = Number(match[2]);
+  if (h < 0 || h > 23 || m < 0 || m > 59) return null;
+  const d = new Date(dateAnchorMs);
+  d.setHours(h, m, 0, 0);
+  return d.getTime();
+}
+
 export { HOUR_MS, MIN_MS };
